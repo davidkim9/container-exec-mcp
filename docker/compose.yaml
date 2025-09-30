@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  ubuntu:
+    image: ubuntu:22.04
+    container_name: ubuntu-dev
+    # Keep container running
+    command: tail -f /dev/null
+    # Enable interactive terminal
+    stdin_open: true
+    tty: true
+    volumes:
+      # Map container's user directory to local ./user directory
+      - ./workspace:/home/ubuntu/workspace
+
+    working_dir: /home/ubuntu
+    environment:
+      - TERM=xterm-256color
+    # Optional: expose ports if needed
+    # ports:
+    #   - "8080:8080"
+    
+    # Optional: install common tools on startup
+    # You can uncomment and modify this section if you want tools pre-installed
+    # entrypoint: |
+    #   bash -c "
+    #     apt-get update && 
+    #     apt-get install -y curl wget git vim nano htop &&
+    #     tail -f /dev/null
+    #   "

@@ -1,0 +1,39 @@
+{
+  "name": "docker-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server with Docker Container automation capabilities",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "start:stdio": "node dist/stdio-server.js",
+    "dev": "tsx src/server.ts",
+    "dev:stdio": "tsx src/stdio-server.ts",
+    "postinstall": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "cors": "^2.8.5",
+    "dockerode": "^4.0.2",
+    "express": "^4.21.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/dockerode": "^3.3.44",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.0",
+    "dockerode": "^4.0.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  },
+  "keywords": [
+    "n8n",
+    "mcp",
+    "docker",
+    "docker-automation"
+  ],
+  "author": "DK",
+  "license": "MIT"
+}

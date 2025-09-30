@@ -35,7 +35,15 @@ For detailed information about available tools, see [tools.md](tools.md).
 
    This will install dependencies and build the project.
 
-3. **Run the server (http only)**
+3. **Run Docker Container**
+   ```bash
+   cd docker
+   docker compose up 
+   ```
+
+   This will run docker compose in the project. You will need docker running for this step.
+
+4. **Run the server (http only)**
 
 
    For HTTP transport (n8n):

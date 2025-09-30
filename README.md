@@ -1,138 +1,23 @@
-# Playwright MCP Server
+# Docker Container MCP Server
 
 ![Let it run code](image.png)
 
-A powerful Model Context Protocol (MCP) server that provides browser automation capabilities using Playwright. This server enables AI assistants like Claude to interact with web pages, extract content, take screenshots, and execute custom browser automation scripts.
+A Model Context Protocol (MCP) server that provides Docker container automation capabilities. This server enables AI assistants like Claude to manage and interact with Docker containers, execute commands, and inspect container information.
 
 ## Features
 
-- 🌐 **Multi-Browser Support** - Chromium, Firefox, and WebKit
-- 🔄 **Session Management** - Persistent browser sessions for multi-step workflows
-- 📸 **Screenshot Capture** - Full-page and element-specific screenshots
-- 📝 **Content Extraction** - Text content from pages or specific selectors
-- 🖱️ **Element Interaction** - Click elements and interact with pages
-- 🎭 **Custom Scripts** - Execute arbitrary Playwright code
+- 🐳 **Container Management** - List and inspect Docker containers
+- 🔧 **Command Execution** - Execute commands inside containers
+- 📊 **Detailed Information** - Get comprehensive container details
 - 🚀 **Dual Transport** - HTTP and stdio (for Claude Code)
 
-- [Playwright MCP Server](#playwright-mcp-server)
-  - [Features](#features)
-  - [Available Tools](#available-tools)
-    - [1. `navigate_url`](#1-navigate_url)
-    - [2. `get_content`](#2-get_content)
-    - [3. `take_screenshot`](#3-take_screenshot)
-    - [4. `click_element`](#4-click_element)
-    - [5. `close_session`](#5-close_session)
-    - [6. `run_playwright`](#6-run_playwright)
-  - [Installation](#installation)
-    - [Prerequisites](#prerequisites)
-    - [Quick Start](#quick-start)
-  - [Development](#development)
-    - [Development Scripts](#development-scripts)
-    - [Project Structure](#project-structure)
-    - [Making Changes](#making-changes)
-    - [Adding New Tools](#adding-new-tools)
-  - [Configuration](#configuration)
-    - [Environment Variables](#environment-variables)
-    - [Claude Code Configuration](#claude-code-configuration)
-    - [HTTP Transport (for n8n or other HTTP clients)](#http-transport-for-n8n-or-other-http-clients)
-  - [Usage Examples](#usage-examples)
-    - [Basic Navigation and Content Extraction](#basic-navigation-and-content-extraction)
-    - [Multi-Step Workflow](#multi-step-workflow)
-    - [Using Different Browsers](#using-different-browsers)
-    - [Taking Screenshots with Visible Browser](#taking-screenshots-with-visible-browser)
-  - [Session Management](#session-management)
-  - [Troubleshooting](#troubleshooting)
-    - [Common Issues](#common-issues)
-    - [Debug Logging](#debug-logging)
-  - [Contributing](#contributing)
-  - [License](#license)
-  - [Acknowledgments](#acknowledgments)
-
-## Available Tools
-
-### 1. `navigate_url`
-Navigate to a URL and automatically analyze page structure.
-
-**Parameters:**
-- `url` (required): The URL to navigate to
-- `sessionId` (optional): Session ID to reuse browser instance (default: "default")
-
-**Returns:**
-- Page title, URL, and HTTP status
-- Automatically identified page sections (semantic, visual, layout)
-- Internal links found on the page
-- Summary statistics
-
-### 2. `get_content`
-Extract text content from the page or specific elements.
-
-**Parameters:**
-- `sessionId` (optional): Session ID of the browser instance
-- `selector` (optional): CSS selector to extract content from
-
-**Returns:**
-- Extracted text content
-- Content length and truncation info
-- Page title and URL
-
-### 3. `take_screenshot`
-Capture screenshots of pages or specific elements.
-
-**Parameters:**
-- `sessionId` (optional): Session ID of the browser instance
-- `selector` (optional): CSS selector to screenshot specific element
-
-**Returns:**
-- File path to saved screenshot
-- Screenshot size and format
-- Page title and URL
-- Base64-encoded screenshot data (unless `DISABLE_SCREENSHOT_DATA` is set)
-
-### 4. `click_element`
-Click on elements using CSS selectors.
-
-**Parameters:**
-- `selector` (required): CSS selector of the element to click
-- `sessionId` (optional): Session ID of the browser instance
-
-**Returns:**
-- Success status
-- Current URL and page title after click
-
-### 5. `close_session`
-Close browser sessions to free up resources.
-
-**Parameters:**
-- `sessionId` (optional): Session ID to close. If omitted, closes all sessions
-
-**Returns:**
-- Number of closed sessions
-- Session IDs that were closed
-
-### 6. `run_playwright`
-Execute custom async Playwright code with full access to the browser API.
-
-**Parameters:**
-- `code` (required): Async JavaScript code to execute
-- `sessionId` (optional): Session ID of the browser instance
-- `timeoutMs` (optional): Execution timeout in milliseconds (default: 15000, max: 120000)
-
-**Returns:**
-- Return value from executed code
-- Execution duration
-- Console logs captured during execution
-
-**Example:**
-```javascript
-const title = await page.title();
-const screenshot = await page.screenshot({ fullPage: true });
-return { title, screenshotSize: screenshot.length };
-```
+For detailed information about available tools, see [tools.md](tools.md).
 
 ## Installation
 
 ### Prerequisites
 - Node.js 18 or higher
+- Docker installed and running
 - npm or yarn
 
 ### Quick Start
@@ -140,7 +25,7 @@ return { title, screenshotSize: screenshot.length };
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd playwright-mcp
+   cd docker-container-mcp
    ```
 
 2. **Install dependencies**
@@ -148,21 +33,17 @@ return { title, screenshotSize: screenshot.length };
    npm install
    ```
 
-   This will install + build + install playwright browsers
+   This will install dependencies and build the project.
 
-3. **Run the server**
+3. **Run the server (http only)**
+
 
    For HTTP transport (n8n):
    ```bash
    npm start
    ```
 
-   For stdio transport (Claude Code):
-   ```bash
-   npm run start:stdio
-   ```
-
-  For configuration based clients: [Claude Code Configuration](#claude-code-configuration)
+   For configuration based clients: [MCP Configuration](#configuration)
 
 ## Development
 
@@ -177,37 +58,30 @@ npm run dev:stdio
 
 # Build TypeScript to JavaScript
 npm run build
-
-# Install Playwright browsers
-npm run install-browsers
 ```
 
 ### Project Structure
 
 ```
-playwright-mcp/
+docker-container-mcp/
 ├── src/
-│   ├── server.ts              # HTTP server (StreamableHTTP transport)
+│   ├── http-server.ts         # HTTP server
 │   ├── stdio-server.ts        # Stdio server (for Claude Code)
 │   ├── tools/                 # Tool implementations
-│   │   ├── navigate-analyze.ts
-│   │   ├── get-content.ts
-│   │   ├── screenshot.ts
-│   │   ├── click-element.ts
-│   │   ├── close-session.ts
-│   │   ├── run-playwright.ts
+│   │   ├── exec.ts            # Execute commands in containers
+│   │   ├── list-containers.ts # List Docker containers
+│   │   ├── get-container-info.ts # Get container details
 │   │   └── registry.ts        # Tool registration
 │   ├── utils/                 # Utility functions
-│   │   ├── browserUtils.ts    # Browser session management
 │   │   ├── fileUtils.ts       # File operations
 │   │   └── responseUtils.ts   # Response formatting
 │   └── shared/
 │       └── types.ts           # TypeScript types
 ├── dist/                      # Compiled JavaScript (generated)
-├── screenshots/               # Screenshot output directory
 ├── package.json
 ├── tsconfig.json
-└── README.md
+├── README.md
+└── tools.md                   # Tool documentation
 ```
 
 ### Making Changes
@@ -226,80 +100,94 @@ Example:
 ```typescript
 import { z } from 'zod';
 import type { ToolDefinition, ToolContext } from '../shared/types.js';
-import { createSuccessResponse, createErrorResponse } from '../utils/responseUtils.js';
-import { getSession } from '../utils/browserUtils.js';
+import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
-const schema = z.object({
-  sessionId: z.string().optional(),
+const inputSchema = z.object({
+  container_id: z.string().describe('Container ID or name'),
   // ... your parameters
 });
 
-async function handler(params: z.infer<typeof schema>, context: ToolContext) {
-  const sessionKey = params.sessionId || 'default';
-  const session = getSession(sessionKey, context.browserSessions);
+async function handler(params: z.infer<typeof inputSchema>, context: ToolContext): Promise<CallToolResult> {
+  const { container_id } = params;
+  const { docker } = context;
 
-  if (!session) {
-    return createErrorResponse('No active browser session found.');
+  try {
+    const container = docker.getContainer(container_id);
+    // ... your tool logic
+
+    return {
+      content: [{
+        type: 'text',
+        text: 'Success message'
+      }]
+    };
+  } catch (error) {
+    return {
+      content: [{
+        type: 'text',
+        text: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      }]
+    };
   }
-
-  // ... your tool logic
-
-  return createSuccessResponse({
-    success: true,
-    // ... your response data
-  });
 }
 
 export const myTool: ToolDefinition = {
   name: 'my_tool',
   description: 'Description of what my tool does',
-  inputSchema: schema,
+  inputSchema,
   handler
 };
 ```
 
 ## Configuration
 
-### Environment Variables
+### Claude Code / Claude Desktop Configuration
 
-Configure the server behavior using environment variables:
-
-| Variable | Description | Default | Options |
-|----------|-------------|---------|---------|
-| `PLAYWRIGHT_HEADLESS` | Run browser in headless mode | `true` | `true`, `false` |
-| `BROWSER_TYPE` | Browser engine to use | `chromium` | `chromium`, `firefox`, `webkit` |
-| `SCREENSHOT_DIR` | Directory for saving screenshots | `./screenshots` | Any valid path |
-| `DISABLE_SCREENSHOT_DATA` | Disable returning screenshot as base64 | Not set | Any value to disable |
-| `PORT` | HTTP server port | `3000` | Any valid port number |
-
-### Claude Code Configuration
-
-To use this server with Claude Code (or Claude Desktop/Cursor), add it to your MCP settings file.
+To use this server with Claude Code or Claude Desktop, add it to your MCP settings file.
 
 **Location:**
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Linux: `~/.config/Claude/claude_desktop_config.json`
 
-**Configuration with Custom Settings:**
+**Configuration:**
 ```json
 {
   "mcpServers": {
-    "playwright": {
+    "docker-container": {
       "command": "/Users/yourname/.nvm/versions/node/v24.4.1/bin/node",
       "args": [
-        "/Users/yourname/projects/playwright-mcp/dist/stdio-server.js"
-      ],
-      "env": {
-        "PLAYWRIGHT_HEADLESS": "false",
-        "BROWSER_TYPE": "chromium",
-        "SCREENSHOT_DIR": "/Users/yourname/projects/playwright-mcp/screenshots"
-      }
+        "/Users/yourname/projects/docker-container-mcp/dist/stdio-server.js"
+      ]
     }
   }
 }
 ```
 
 > **Note:** After updating the configuration, restart Claude Code/Desktop for changes to take effect.
+>
+> **Important:** Ensure Docker is running and accessible on your system.
+
+### Cursor Configuration
+
+To use this server with Cursor, add it to your MCP settings file.
+
+**Configuration:**
+```json
+{
+  "mcpServers": {
+    "docker-container": {
+      "command": "/Users/yourname/.nvm/versions/node/v24.4.1/bin/node",
+      "args": [
+        "/Users/yourname/projects/docker-container-mcp/dist/stdio-server.js"
+      ]
+    }
+  }
+}
+```
+
+> **Note:** After updating the configuration, restart Cursor for changes to take effect.
+>
+> **Important:** Ensure Docker is running and accessible on your system.
 
 ### HTTP Transport (for n8n or other HTTP clients)
 
@@ -307,155 +195,67 @@ Start the HTTP server:
 ```bash
 npm start
 # or with custom port
-PORT=3001 npm start
+PORT=4200 npm start
 ```
 
-The server will listen on `http://localhost:3000/mcp` (or your custom port).
+The server will listen on `http://localhost:4200/mcp` (or your custom port).
 
 **Example HTTP Request:**
 ```bash
-curl -X POST http://localhost:3000/mcp \
+curl -X POST http://localhost:4200/mcp \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
     "method": "tools/call",
     "params": {
-      "name": "navigate_url",
+      "name": "list_containers",
       "arguments": {
-        "url": "https://example.com",
-        "sessionId": "my-session"
+        "all": true
       }
     }
   }'
 ```
 
-## Usage Examples
-
-### Basic Navigation and Content Extraction
-
-```javascript
-// 1. Navigate to a page
-navigate_url({ url: "https://example.com" })
-
-// 2. Extract content from the page
-get_content({ selector: ".main-content" })
-
-// 3. Take a screenshot
-take_screenshot({ selector: ".important-section" })
-
-// 4. Close the session
-close_session({ sessionId: "default" })
-```
-
-### Multi-Step Workflow
-
-```javascript
-// 1. Navigate and create a session
-navigate_url({
-  url: "https://github.com/login",
-  sessionId: "github-session"
-})
-
-// 2. Click the login button
-click_element({
-  selector: "button[type='submit']",
-  sessionId: "github-session"
-})
-
-// 3. Run custom code to interact
-run_playwright({
-  sessionId: "github-session",
-  code: `
-    // Fill in login form
-    await page.fill('#login_field', 'username');
-    await page.fill('#password', 'password');
-    await page.click('[name="commit"]');
-
-    // Wait for navigation
-    await page.waitForNavigation();
-
-    return { loggedIn: true, url: page.url() };
-  `
-})
-
-// 4. Take screenshot of authenticated page
-take_screenshot({ sessionId: "github-session" })
-
-// 5. Close when done
-close_session({ sessionId: "github-session" })
-```
-
-### Using Different Browsers
-
-Set the `BROWSER_TYPE` environment variable:
-
-```bash
-# Use Firefox
-BROWSER_TYPE=firefox npm run start:stdio
-
-# Use WebKit (Safari engine)
-BROWSER_TYPE=webkit npm run start:stdio
-```
-
-### Taking Screenshots with Visible Browser
-
-Useful for debugging or demonstrations:
-
-```bash
-PLAYWRIGHT_HEADLESS=false npm run start:stdio
-```
-
-## Session Management
-
-Browser sessions are persistent and identified by `sessionId`. This allows for:
-- **Multi-step workflows** - Navigate, interact, and extract data across multiple tool calls
-- **Parallel sessions** - Run multiple independent browser sessions simultaneously
-- **Resource efficiency** - Reuse browser instances instead of creating new ones
-
-**Session Lifecycle:**
-1. First `navigate_url` call creates a new session
-2. Subsequent calls with the same `sessionId` reuse the session
-3. Call `close_session` to explicitly close and free resources
-4. Sessions are automatically cleaned up when the server shuts down
-
-**Default Session:**
-- If no `sessionId` is provided, the default session `"default"` is used
-- This is convenient for single-tab workflows
-
 ## Troubleshooting
 
 ### Common Issues
 
-**1. Node.js version too old**
+**1. Docker not running**
 ```
-Error: Playwright requires Node.js 18 or higher
+Error: connect ENOENT /var/run/docker.sock
+```
+Solution: Start Docker Desktop or the Docker daemon.
+
+**2. Docker permission denied**
+```
+Error: permission denied while trying to connect to the Docker daemon socket
+```
+Solution: On Linux, add your user to the docker group: `sudo usermod -aG docker $USER` (then log out and back in).
+
+**3. Node.js version too old**
+```
+Error: Node.js 18 or higher required
 ```
 Solution: Update Node.js to version 18 or higher.
 
-**2. Browser not installed**
+**4. Container not found**
 ```
-Error: Executable doesn't exist at /path/to/browser
+Error: No such container: xyz
 ```
-Solution: Run `npm run install-browsers`
+Solution: Verify the container ID or name with `list_containers`.
 
-**3. Permission denied (Claude Code)**
+**5. Port already in use (HTTP mode)**
 ```
-Error: EACCES: permission denied
-```
-Solution: Ensure the script has execute permissions and use absolute paths in configuration.
-
-**4. Port already in use (HTTP mode)**
-```
-Error: listen EADDRINUSE: address already in use :::3000
+Error: listen EADDRINUSE: address already in use :::4200
 ```
 Solution: Change the port with `PORT=3001 npm start`
 
 ### Debug Logging
 
 For stdio mode, logs are written to stderr and appear in Claude Code logs:
-- macOS: `~/Library/Logs/Claude/mcp-server-playwright.log`
-- Linux: `~/.config/Claude/logs/mcp-server-playwright.log`
+- macOS: `~/Library/Logs/Claude/mcp-server-docker-container.log`
+- Linux: `~/.config/Claude/logs/mcp-server-docker-container.log`
 
 For HTTP mode, logs appear in the terminal where you started the server.
 
@@ -476,7 +276,7 @@ MIT
 ## Acknowledgments
 
 Built with:
-- [Playwright](https://playwright.dev/) - Browser automation
+- [Dockerode](https://github.com/apocas/dockerode) - Docker API client
 - [Model Context Protocol SDK](https://github.com/modelcontextprotocol/typescript-sdk) - MCP implementation
 - [Zod](https://zod.dev/) - Schema validation
-- [Express](https://expressjs.com/) - HTTP server (for n8n mode)
+- [Express](https://expressjs.com/) - HTTP server

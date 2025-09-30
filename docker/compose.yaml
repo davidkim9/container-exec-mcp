@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   ubuntu:
-    image: ubuntu:22.04
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: ubuntu-dev
     # Keep container running
     command: tail -f /dev/null
@@ -13,7 +15,7 @@ services:
       # Map container's user directory to local ./user directory
       - ./workspace:/home/ubuntu/workspace
 
-    working_dir: /home/ubuntu
+    working_dir: /home/ubuntu/workspace
     environment:
       - TERM=xterm-256color
     # Optional: expose ports if needed

@@ -2,13 +2,13 @@
   "name": "docker-mcp-server",
   "version": "1.0.0",
   "description": "MCP server with Docker Container automation capabilities",
-  "main": "dist/server.js",
+  "main": "dist/http-server.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/http-server.js",
     "start:stdio": "node dist/stdio-server.js",
-    "dev": "tsx src/server.ts",
+    "dev": "tsx src/http-server.ts",
     "dev:stdio": "tsx src/stdio-server.ts",
     "postinstall": "npm run build"
   },

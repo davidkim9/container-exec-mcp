@@ -7,26 +7,10 @@ import type { ToolContext } from './shared/types.js';
 import { getAllTools } from './tools/registry.js';
 
 /*
- * DOCKER CONTAINER MCP SERVER
+ * DOCKER CONTAINER MCP SERVER (HTTP)
  *
- * This MCP server provides Docker container management and execution capabilities.
- * It allows you to interact with Docker containers directly.
- *
- * FEATURES:
- *
- * 🐳 DOCKER OPERATIONS:
- * - List all containers (running and stopped)
- * - Inspect container details
- * - Execute commands in containers via Docker exec
- * - Interactive command execution with stdin support
- * - Better stdout/stderr handling and streaming
- * - Container information and status checking
- * - Start/stop containers
- * - View container logs
- *
- * USAGE:
- * Start the server and use the tools to manage Docker containers.
- * Example: npm run start
+ * This is the HTTP version of the Docker Container MCP server.
+ * It provides Docker container management and execution capabilities via HTTP transport.
  */
 
 // Initialize Docker client
@@ -127,25 +111,9 @@ app.delete('/mcp', async (req: Request, res: Response) => {
 });
 
 // Start the server
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 4200;
 app.listen(PORT, () => {
   console.log(`🐳 Docker Container MCP Server listening on port ${PORT}`);
-  console.log('');
-  console.log('🐳 DOCKER TOOLS:');
-  console.log('- list_containers: List all containers (running and stopped)');
-  console.log('- inspect_container: Get detailed container information');
-  console.log('- exec: Execute commands in a container');
-  console.log('- start_container: Start a stopped container');
-  console.log('- stop_container: Stop a running container');
-  console.log('- container_logs: Get container logs');
-  console.log('- docker_info: Get Docker system information');
-  console.log('');
-  console.log('💡 USAGE EXAMPLES:');
-  console.log('  list_containers: { "all": true }');
-  console.log('  inspect_container: { "container_id": "my-container" }');
-  console.log('  exec: { "container_id": "my-container", "command": "ls -la" }');
-  console.log('  start_container: { "container_id": "my-container" }');
-  console.log('');
 });
 
 // Handle server shutdown

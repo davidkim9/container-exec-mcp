@@ -48,3 +48,5 @@ screenshots/*
 .env.local
 .env.*.local
 .claude
+
+docker/workspace/*

@@ -7,7 +7,7 @@ const inputSchema = z.object({
   container_id: z.string().describe('Container ID or name'),
   command: z.string().describe('Command to execute in the container'),
   stdin: z.string().optional().describe('Input to send to the command via stdin'),
-  working_dir: z.string().optional().describe('Working directory for the command'),
+  working_dir: z.string().optional().default('/home/ubuntu/workspace').describe('Working directory for the command'),
   user: z.string().optional().describe('User to run the command as'),
   env: z.array(z.string()).optional().describe('Environment variables (format: KEY=value)'),
   timeout: z.number().optional().default(30).describe('Command timeout in seconds')

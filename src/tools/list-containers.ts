@@ -26,11 +26,11 @@ async function handler(params: z.infer<typeof inputSchema>, context: ToolContext
     let output = `${all ? 'All' : 'Running'} Containers:\n${'='.repeat(80)}\n\n`;
 
     for (const container of containers) {
-      const name = container.Names.map(n => n.replace(/^\//, '')).join(', ');
+      const name = container.Names?.map(n => n.replace(/^\//, '')).join(', ') || 'unknown';
       const image = container.Image;
       const status = container.Status;
       const state = container.State;
-      const ports = container.Ports.map(p => {
+      const ports = container.Ports?.map(p => {
         if (p.PublicPort) {
           return `${p.IP || '0.0.0.0'}:${p.PublicPort}->${p.PrivatePort}/${p.Type}`;
         }

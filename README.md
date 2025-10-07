@@ -1,15 +1,19 @@
-# Docker Container MCP Server
+# Container Exec MCP Server
 
 ![Let it run code](image.png)
 
 A Model Context Protocol (MCP) server that provides Docker container automation capabilities. This server enables AI assistants like Claude/Cursor/ChatGPT to manage and interact with Docker containers, execute commands, and inspect container information.
+
+This package minimizes the amount of tools to help AI Agents pick the right tool for a given prompt.
+
+Note: This is not a Docker Management MCP
 
 ## Features
 
 - 🐳 **Container Management** - List and inspect Docker containers
 - 🔧 **Command Execution** - Execute commands inside containers
 - 📊 **Detailed Information** - Get comprehensive container details
-- 🚀 **Dual Transport** - HTTP and stdio (for Claude Code)
+- 🚀 **Dual Transport** - HTTP and stdio (for Claude Code/Cursor)
 
 For detailed information about available tools, see [tools.md](tools.md).
 

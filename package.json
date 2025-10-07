@@ -4,6 +4,9 @@
   "description": "MCP server with Docker Container automation capabilities",
   "main": "dist/http-server.js",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "bin": {
     "container-exec-mcp": "dist/stdio-server.js"
   },

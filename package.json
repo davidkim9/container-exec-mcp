@@ -1,6 +1,6 @@
 {
   "name": "container-exec-mcp",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "MCP server with Docker Container automation capabilities",
   "main": "dist/http-server.js",
   "type": "module",

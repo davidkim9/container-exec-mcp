@@ -41,6 +41,14 @@
     "docker",
     "docker-automation"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidkim9/container-exec-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/davidkim9/container-exec-mcp/issues"
+  },
+  "homepage": "https://github.com/davidkim9/container-exec-mcp#readme",
   "author": "DK",
   "license": "MIT"
 }
